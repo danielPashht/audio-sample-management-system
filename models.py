@@ -13,7 +13,7 @@ class Sample(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(CHAR(length=50), nullable=False)
 	extension = Column(CHAR(length=10), nullable=False)
-	category_id = Column(Integer, ForeignKey('category.id'), nullable=False)
+	category_id = Column(Integer, ForeignKey('category.id'), nullable=True)
 
 	category = relationship('Category', back_populates='samples')
 
