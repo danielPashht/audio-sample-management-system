@@ -1,5 +1,5 @@
 from base_backend import BaseBackend
 
 
-class RAWBackend(BaseBackend):
+class RawBackend(BaseBackend):
 	pass

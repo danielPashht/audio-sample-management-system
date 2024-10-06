@@ -9,16 +9,18 @@ class ORMBackend(BaseBackend):
 
 	Base.metadata.create_all(engine)
 
-	def get_sample(self, sample_id):
+	def get_sample(self, name):
 		with self.session as session:
-			return session.query(Sample).get(sample_id)
+			return session.query(Sample).get(name)
 
 	def get_samples_by_category(self, category_id):
 		with self.session as session:
 			session.query(Sample).filter_by(category_id=category_id)
 
-	def add_sample(self, sample):
+	def add_sample(self, sample, category_name):
 		with self.session as session:
+			if category_name:
+				sample.category_id = session.query(Category).filter_by(name=category_name).first
 			session.add(sample)
 			session.commit()
 
@@ -39,3 +41,9 @@ class ORMBackend(BaseBackend):
 				s.category_id = None
 			session.query(Category).filter_by(Category.id == category_id).delete()
 			session.commit()
+
+	def get_category_id(self, category_name):
+		with self.session as session:
+			return session.query(Category).filter_by(name=category_name).first()
+
+

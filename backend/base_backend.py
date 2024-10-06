@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class BaseBackend(ABC):
     @abstractmethod
-    def add_sample(self, sample):
+    def add_sample(self, sample, category_name):
         pass
 
     @abstractmethod
@@ -24,4 +24,8 @@ class BaseBackend(ABC):
 
     @abstractmethod
     def delete_category(self, category_id):
+        pass
+
+    @abstractmethod
+    def get_category_id(self, category_name):
         pass
