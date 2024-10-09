@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from connection import get_db_url
+from database.connection import get_db_url
 from contextlib import contextmanager
 
 engine = create_engine(get_db_url(), echo=True)

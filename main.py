@@ -11,20 +11,22 @@ class ConsoleApp:
 
 	def __init__(self):
 		self.backend = None
-		self.sample_manager = SampleManager(self)
+		self.sample_manager = None
 
 	def __set_backend_type(self, backend_type: str):
 		if backend_type == 'raw':
 			self.backend = RawBackend()
+			self.sample_manager = SampleManager(self)
 		elif backend_type == 'orm':
 			self.backend = ORMBackend()
+			self.sample_manager = SampleManager(self)
 		else:
 			raise ValueError('Unknown backend type')
 
 	def _ask_for_backend_type(self):
 		mode: str = ''
 		while mode not in ('raw', 'orm'):
-			mode = input('Choose connection mode (raw/orm): ')
+			mode = input('\nChoose connection mode (raw/orm): ')
 		self.__set_backend_type(mode)
 		print('Mode is successfully set to ', mode, '\n')
 
@@ -71,6 +73,7 @@ class ConsoleApp:
 
 class SampleManager:
 	def __init__(self, console_app):
+		self.console_app = console_app
 		self.backend = console_app.backend
 		self._possible_extensions = console_app.possible_extensions
 
@@ -81,7 +84,7 @@ class SampleManager:
 
 	def add_sample(self):
 		file_name = input('Enter correct file name with extension: ')
-		category_id = None
+		category_name = None
 
 		if self._validate_file_name(file_name):
 			sample_name = file_name.split('.')[0]
@@ -91,15 +94,17 @@ class SampleManager:
 				time.sleep(1)
 			else:
 				if input('Want to specify category? (y/n): ').lower() in ('y', 'yes'):
-					category = input('Enter category name: ')
-					category_id = self.backend.get_category_id(category.lower())
+					category_name = input('Enter category name: ')
 				sample = Sample(
-					sample_name=sample_name.lower(),
+					name=sample_name.lower(),
 					extension=file_name.split('.')[-1],
-					category_id=category_id if category_id else None
 				)
-				self.backend.add_sample(sample)
-				print(f'Sample "{sample_name}" added')
+				category = self.backend.add_sample(sample, category_name=category_name)
+				if self.backend.get_sample(sample_name):
+					print(f'Sample "{sample_name}" added to category "{category}"')
+				else:
+					print('Category not recognized')
+					print(f'Sample "{sample_name}" added with no category')
 				time.sleep(1)
 		else:
 			print(f'Incorrect file name: "{file_name}"')
@@ -107,11 +112,9 @@ class SampleManager:
 
 	def delete_sample(self):
 		sample_name = input('Enter sample name: ')
-		sample = self.backend.get_sample(sample_name)
-
-		if sample:
-			self.backend.delete_sample(sample.id)
-			print(f'Sample "{sample_name}" deleted')
+		self.backend.delete_sample(sample_name)
+		if not self.backend.get_sample(sample_name):
+			print(f'Sample "{sample_name}" not exists now')
 			time.sleep(1)
 		else:
 			print(f'Sample "{sample_name}" not found')
