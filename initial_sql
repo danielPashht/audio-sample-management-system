@@ -1,0 +1,23 @@
+CREATE TABLE samples (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    extension VARCHAR(10) NOT NULL,
+    category_id INT REFERENCES categories(id)
+);
+
+CREATE TABLE category (
+    id SERIAL PRIMARY KEY,
+    name CHAR(50) NOT NULL
+);
+
+INSERT INTO category (id, name) VALUES
+    (1, 'mp3'),
+    (2, 'wav'),
+    (3, 'ogg'),
+    (4, 'flac'),
+    (5, 'aac'),
+    (6, 'wma'),
+    (7, 'm4a'),
+    (8, 'aiff'),
+    (9, 'alac'),
+    (10, 'pcm');
